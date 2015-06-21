@@ -15,4 +15,5 @@ class Tbl_posts
     const schedule = "p_schedule";
     const post_to = "p_post_to";
     const progress = "p_progress";
+    const post_time = "p_post_time";
 }

@@ -1,5 +1,6 @@
 <?php
-if (!defined('BASEPATH')) exit('No direct script access allowed');
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
 
 class Managecampaigns extends CI_Controller {
 
@@ -75,7 +76,7 @@ class Managecampaigns extends CI_Controller {
     public function add() {
         $this->Mod_general->checkUser();
         $actions = $this->uri->segment(3);
-        $id = !empty($_GET['id'])?$_GET['id']:'';
+        $id = !empty($_GET['id']) ? $_GET['id'] : '';
         $log_id = $this->session->userdata('user_id');
         $this->Mod_general->checkUser();
         $user = $this->session->userdata('email');
@@ -83,25 +84,25 @@ class Managecampaigns extends CI_Controller {
         $provider = $this->session->userdata('provider');
         $this->load->theme('layout');
         $data['title'] = 'Admin Area :: Manage Campaigns';
-        
+
         /*get post for each user*/
-        $where_so = array(Tbl_posts::user => $log_id, Tbl_posts::id=>$id);
+        $where_so = array(Tbl_posts::user => $log_id, Tbl_posts::id => $id);
         $dataPost = $this->Mod_general->select(Tbl_posts::tblName, '*', $where_so);
         $data['data'] = $dataPost;
         /* end get post for each user*/
-        
+
         /*get User for each user*/
-        $where_uGroup = array(Tbl_social::u_id => $log_id, Tbl_social::s_status=>1);
+        $where_uGroup = array(Tbl_social::u_id => $log_id, Tbl_social::s_status => 1);
         $dataGroup = $this->Mod_general->select(Tbl_social::tblName, '*', $where_uGroup);
         $data['account'] = $dataGroup;
         /* end get User for each user*/
-        
+
         $ajax = base_url() . 'managecampaigns/ajax?gid=';
         $data['js'] = array(
             'themes/layout/blueone/plugins/validation/jquery.validate.min.js',
             'themes/layout/blueone/plugins/pickadate/picker.js',
             'themes/layout/blueone/plugins/pickadate/picker.time.js',
-        );
+            );
         $data['addJsScript'] = array("
         $(document).ready(function() {
             $('#togroup').click(function () {
@@ -201,8 +202,8 @@ class Managecampaigns extends CI_Controller {
          $('#validate').validate();
      });
     ");
-    
-    /* get form */
+
+        /* get form */
         if ($this->input->post('submit')) {
             $videotype = '';
             $title = $this->input->post('title');
@@ -222,39 +223,39 @@ class Managecampaigns extends CI_Controller {
             $loopOnDay = $this->input->post('loopDay');
             $itemGroups = $this->input->post('itemid');
             $postId = $this->input->post('postid');
-            
+
             /*check account type */
-            $s_acount = explode('|',$accoung);
+            $s_acount = explode('|', $accoung);
             /*end check account type */
-            
+
             /*data content*/
             $content = array(
-                'title' =>@$title,
-                'message' =>@$message,
-                'caption' =>@$caption,
-                'link' =>@$link,
-                'thumb' =>@$thumb,
-            );
+                'name' => @$title,
+                'message' => @$message,
+                'caption' => @$caption,
+                'link' => @$link,
+                'picture' => @$thumb,
+                );
             /*end data content*/
-            
+
             /*data schedule*/
             $days = array();
-            foreach($loopOnDay as $dayLoop) {
-                if(!empty($dayLoop)) {
+            foreach ($loopOnDay as $dayLoop) {
+                if (!empty($dayLoop)) {
                     $days[] = $dayLoop;
                 }
             }
             $schedule = array(
-                'start_date' =>@$startDate,
-                'start_time' =>@$startTime,
-                'end_date' =>@$endDate,
-                'end_time' =>@$endDate,
-                'loop' =>@$looptype,
-                'loop_every' =>@$loopEvery,
-                'loop_on' =>@$days,
-            );
+                'start_date' => @$startDate,
+                'start_time' => @$startTime,
+                'end_date' => @$endDate,
+                'end_time' => @$endDate,
+                'loop' => @$looptype,
+                'loop_every' => @$loopEvery,
+                'loop_on' => @$days,
+                );
             /*end data schedule*/
-            
+
             $this->load->library('form_validation');
             $this->form_validation->set_rules('link', 'link', 'required');
             $this->form_validation->set_rules('thumb', 'thumb', 'required');
@@ -269,30 +270,31 @@ class Managecampaigns extends CI_Controller {
                     Tbl_posts::user => $log_id,
                     Tbl_posts::post_to => $postTo,
                     Tbl_posts::type => @$s_acount[1],
-                );
-                if(!empty($postId)) {
+                    );
+                if (!empty($postId)) {
                     $AddToPost = $postId;
-                    $this->Mod_general->update(Tbl_posts::tblName, $dataPostInstert,array(Tbl_posts::id=>$postId));
+                    $this->Mod_general->update(Tbl_posts::tblName, $dataPostInstert, array(Tbl_posts::
+                            id => $postId));
                 } else {
                     $AddToPost = $this->Mod_general->insert(Tbl_posts::tblName, $dataPostInstert);
                 }
                 /*end add data to post*/
-                
+
                 /*add data to group of post*/
-//                if(!empty($itemGroups)) {
-//                    foreach($itemGroups as $key => $groups) {
-//                        if(!empty($groups)) {
-//                            $dataGoupInstert = array(
-//                                Tbl_share::post_id => $AddToPost,
-//                                Tbl_share::group_id => $groups,
-//                                Tbl_share::social_id => @$s_acount[0],
-//                                Tbl_share::option => json_encode($schedule),
-//                                Tbl_share::type => @$s_acount[1],
-//                            );
-//                            $AddToGroup = $this->Mod_general->insert(Tbl_share::TblName, $dataGoupInstert);
-//                        }
-//                    }
-//                }
+                //                if(!empty($itemGroups)) {
+                //                    foreach($itemGroups as $key => $groups) {
+                //                        if(!empty($groups)) {
+                //                            $dataGoupInstert = array(
+                //                                Tbl_share::post_id => $AddToPost,
+                //                                Tbl_share::group_id => $groups,
+                //                                Tbl_share::social_id => @$s_acount[0],
+                //                                Tbl_share::option => json_encode($schedule),
+                //                                Tbl_share::type => @$s_acount[1],
+                //                            );
+                //                            $AddToGroup = $this->Mod_general->insert(Tbl_share::TblName, $dataGoupInstert);
+                //                        }
+                //                    }
+                //                }
                 /*end add data to group of post*/
             }
             redirect(base_url() . 'managecampaigns');
@@ -326,7 +328,7 @@ class Managecampaigns extends CI_Controller {
                         Tbl_posts::name => $code['title'],
                         Tbl_posts::user => $log_id,
                         Tbl_posts::conent => json_encode($code),
-                    );
+                        );
                     $dataPostID = $this->Mod_general->insert(Tbl_posts::tblName, $data_post_id);
                     redirect(base_url() . 'managecampaigns/add?id=' . $dataPostID);
                 }
@@ -386,7 +388,7 @@ class Managecampaigns extends CI_Controller {
                 $thumb = $image_id;
             }
             $thumb = $this->resize_image($thumb);
-            $short_url = $this->get_bitly_short_url($url,BITLY_USERNAME,BITLY_API_KEY);
+            $short_url = $this->get_bitly_short_url($url, BITLY_USERNAME, BITLY_API_KEY);
             $data = array(
                 'image' => @$thumb,
                 'title' => trim($title),
@@ -481,121 +483,266 @@ class Managecampaigns extends CI_Controller {
         curl_close($ch);
         return $data;
     }
-    
+
     /* returns a result form url */
     function ajax() {
         //getgroup
-        $id = !empty($_GET['gid'])?$_GET['gid']:'';
-        $page = !empty($_GET['p'])?$_GET['p']:'';
+        $id = !empty($_GET['gid']) ? $_GET['gid'] : '';
+        $page = !empty($_GET['p']) ? $_GET['p'] : '';
         $log_id = $this->session->userdata('user_id');
         $data = '';
-        if($log_id) {
-            switch($page){
+        if ($log_id) {
+            switch ($page) {
                 case 'getgroup':
-                    $where_uGroup = array(Tbl_social_group::socail_id => $id, Tbl_social_group::status=>1, Tbl_social_group::type=>'groups');
+                    $where_uGroup = array(
+                        Tbl_social_group::socail_id => $id,
+                        Tbl_social_group::status => 1,
+                        Tbl_social_group::type => 'groups');
                     $dataGroup = $this->Mod_general->select(Tbl_social_group::tblName, '*', $where_uGroup);
-                    $i=0;
-                    foreach($dataGroup as $gvalue) {
+                    $i = 0;
+                    foreach ($dataGroup as $gvalue) {
                         $i++;
-                        $data .= '<label class="checkbox"><input type="checkbox" class="tgroup" name="itemid[]" value="'.$gvalue->{Tbl_social_group::page_id}.'"/>'.$i.' - '.$gvalue->{Tbl_social_group::name}.'</label>';
+                        $data .= '<label class="checkbox"><input type="checkbox" class="tgroup" name="itemid[]" value="' .
+                            $gvalue->{Tbl_social_group::page_id} . '"/>' . $i . ' - ' . $gvalue->{
+                            Tbl_social_group::name} . '</label>';
                     }
                     echo $data;
-                break;
-                
+                    break;
+
                 case 'addgroup':
-                    $groups = !empty($_GET['g'])?$_GET['g']:'';
-                    $pid = !empty($_GET['pid'])?$_GET['pid']:'';
-                    if(!empty($groups)) {
-                        $groupsArr = explode('|',$groups);
-                        $s_value = explode('|',$id);
+                    $groups = !empty($_GET['g']) ? $_GET['g'] : '';
+                    $pid = !empty($_GET['pid']) ? $_GET['pid'] : '';
+                    if (!empty($groups)) {
+                        $groupsArr = explode('|', $groups);
+                        $s_value = explode('|', $id);
                         $groupCount = array();
-                        foreach($groupsArr as $group) {
-                            $checkExist = $this->mod_general->select(Tbl_share::TblName,'*',array(Tbl_share::group_id=>$group,Tbl_share::post_id => $pid, Tbl_share::social_id => @$s_value[0]));
-                            if(empty($checkExist)) {
+                        foreach ($groupsArr as $group) {
+                            $checkExist = $this->mod_general->select(Tbl_share::TblName, '*', array(
+                                Tbl_share::group_id => $group,
+                                Tbl_share::post_id => $pid,
+                                Tbl_share::social_id => @$s_value[0]));
+                            if (empty($checkExist) && !empty($s_value[0])) {
                                 $dataGoupInstert = array(
                                     Tbl_share::post_id => $pid,
                                     Tbl_share::group_id => $group,
                                     Tbl_share::social_id => @$s_value[0],
                                     Tbl_share::type => @$s_value[1],
-                                );
+                                    );
                                 $AddToGroup = $this->Mod_general->insert(Tbl_share::TblName, $dataGoupInstert);
                                 array_push($groupCount, $group);
                             }
-                            
+
                         }
                         echo count($groupCount);
                     }
-                break;
+                    break;
             }
         }
     }
- 
- 
-     public function schedules () {
+
+    public function schedules() {
         ob_start();
-        $getSocial = $this->mod_general->select(Tbl_share::TblName,'',null,'',Tbl_share::social_id);
-        foreach($getSocial as $social) {
+        $getPosts = $this->mod_general->select(Tbl_posts::tblName, '', array(Tbl_posts::status => 1));
+        if (!empty($getPosts)) {
+            foreach ($getPosts as $toPost) {
+                $getTimes = json_decode($toPost->{Tbl_posts::schedule}, true);
+                $postTo = $toPost->{Tbl_posts::post_to};
+                $postProgress = $toPost->{Tbl_posts::progress};
+
+                $currentTime = time();
+                $start_date = $getTimes['start_date'];
+                $start_time = $getTimes['start_time'];
+                $loop = $getTimes['loop'];
+                $time = strtotime($start_date . ' ' . $start_time);
+                $newformat = date('Y-m-d H:i:s', $time);
+                $date = strtotime($start_date);
+                $newDate = date('Y-m-d', $date);
+                $end_date = $getTimes['end_date'];
+                $endDate = strtotime($end_date);
+
+                if ($postTo == 'groups') {
+                    /*get groups*/
+
+                    /*end get groups*/
+                } else if ($postTo == 'wall') {
+
+                }
+                
+                if ($postProgress == 0) {
+                    $this->mod_general->update(Tbl_posts::tblName, 
+                        array(Tbl_posts::progress => 1),
+                        array(Tbl_posts::id => $toPost->{Tbl_posts::id})
+                    );
+                } else {
+                    
+                }
+            }
+        }
+        ob_flush();
+die;
+        ///////////////////////////
+        $getSocial = $this->mod_general->select(Tbl_share::TblName, '', null, '',
+            Tbl_share::social_id);
+        foreach ($getSocial as $social) {
             /*get time schedules*/
-            $getTime = $this->mod_general->select(Tbl_posts::tblName,'',array(Tbl_posts::id=>$social->{Tbl_share::post_id}, Tbl_posts::status=>1));
-            if(!empty($getTime[0])) {
-                $getTimes = json_decode($getTime[0]->{Tbl_posts::schedule},true);
+            $getTime = $this->mod_general->select(Tbl_posts::tblName, '', array(Tbl_posts::
+                    id => $social->{Tbl_share::post_id}, Tbl_posts::status => 1));
+            if (!empty($getTime[0])) {
+                $getTimes = json_decode($getTime[0]->{Tbl_posts::schedule}, true);
 
                 $postTo = $getTime[0]->{Tbl_posts::post_to};
                 $postProgress = $getTime[0]->{Tbl_posts::progress};
-                
+
+                $currentTime = time();
                 $start_date = $getTimes['start_date'];
                 $start_time = $getTimes['start_time'];
-                $time = strtotime($start_date. ' '.$start_time);
-                $newformat = date('Y-m-d H:i:s',$time);
+                $loop = $getTimes['loop'];
+                $time = strtotime($start_date . ' ' . $start_time);
+                $newformat = date('Y-m-d H:i:s', $time);
                 $date = strtotime($start_date);
-                $newDate = date('Y-m-d',$date);
+                $newDate = date('Y-m-d', $date);
+
+                $end_date = $getTimes['end_date'];
+                $endDate = strtotime($end_date);
                 /*end get time schedules*/
-                if($postTo == 'groups') {
+                if ($postTo == 'groups') {
                     /*get groups*/
-                    $getGroups = $this->mod_general->select(Tbl_share::TblName,'',array(Tbl_share::social_id => $social->{Tbl_share::social_id}));
-                    if(!empty($getGroups)) {
-                        $i=0;
+                    $getGroups = $this->mod_general->select(Tbl_share::TblName, '', array(Tbl_share::
+                            social_id => $social->{Tbl_share::social_id}));
+                    if (!empty($getGroups)) {
+                        $i = 0;
                         $countTime = array();
-                        foreach($getGroups as $groups) {
+                        foreach ($getGroups as $groups) {
                             $i++;
-                            $today = time();
-                            if ($i % 5 == 0) {
-                                $push = 15;
-                                for($j = 0;($j<$push);$j++) {
-                                    array_push($countTime, 1);
+
+                            /*check post is in progress run in the first time*/
+                            if ($postProgress == 0) {
+                                $today = time();
+                                if ($i % 5 == 0) {
+                                    $push = 60;
+                                    for ($j = 0; ($j < $push); $j++) {
+                                        array_push($countTime, 1);
+                                    }
                                 }
-                            }
-                            $counts = count($countTime);
-                            $dateNew = $time++ + (strtotime($today) + @$counts);
-                            if($postProgress == 0) {
-                                if(!empty($groups->{Tbl_share::group_id})) {
+                                $counts = count($countTime);
+                                $dateNew = $time++ + (strtotime($today) + @$counts);
+                                if (!empty($groups->{Tbl_share::group_id})) {
                                     $dataNew = array(
                                         Tbl_share_pro::datetime => $dateNew,
-                                         Tbl_share_pro::status => 0,
-                                         Tbl_share_pro::group_id => $groups->{Tbl_share::group_id},
-                                         Tbl_share_pro::post_id => $groups->{Tbl_share::post_id},
-                                    );
-                                    $this->mod_general->insert(Tbl_share_pro::TblName,$dataNew);
+                                        Tbl_share_pro::status => 0,
+                                        Tbl_share_pro::group_id => $groups->{Tbl_share::group_id},
+                                        Tbl_share_pro::post_id => $groups->{Tbl_share::post_id},
+                                        Tbl_share_pro::social_id => $groups->{Tbl_share::social_id},
+                                        Tbl_share_pro::type => $groups->{Tbl_share::type},
+                                        Tbl_share_pro::share_id => $groups->{Tbl_share::id},
+                                        );
+                                    $this->mod_general->insert(Tbl_share_pro::TblName, $dataNew);
                                 }
-                                $this->mod_general->update(Tbl_posts::tblName,array(Tbl_posts::progress=>1), array(Tbl_posts::id=>$getTime[0]->{Tbl_posts::id}));
+                                $this->mod_general->update(Tbl_posts::tblName, array(Tbl_posts::progress => 1),
+                                    array(Tbl_posts::id => $getTime[0]->{Tbl_posts::id}));
+                                /*end check post is in progress run in the first time*/
+
+                            } else {
+                                if ($loop == 1) {
+                                    /* get post if not the first time*/
+                                    if (!empty($end_date) && $currentTime > $endDate) {
+                                        echo 11111111111;
+                                        /*if set end date*/
+                                        $groupPostTime = $groups->{Tbl_share::date_post};
+                                        /*end if set end date*/
+
+                                    } else
+                                        if (empty($end_date)) {
+
+                                            /*loop post*/
+                                        }
+                                    /* end get post if not the first time*/
+                                }
                             }
                         }
                     }
                     //var_dump($getGroups);
                     /*end get groups*/
-                } else if ($postTo == 'wall') {
-                    
-                }
-                
+                } else
+                    if ($postTo == 'wall') {
+
+                    }
+
             }
         }
         ob_flush();
         die;
-     }
-    
-    public function socailpost () {
+    }
+
+    public function socailpost() {
+        $postProgress = $this->mod_general->select(Tbl_share_pro::TblName);
+        $today = time();
+        if (!empty($postProgress)) {
+            $i = 0;
+            $countTime = array();
+            foreach ($postProgress as $setPost) {
+                if ($setPost->{Tbl_share_pro::status} == 0) {
+                    $i++;
+                    $datePost = $setPost->{Tbl_share_pro::datetime};
+                    $endTime = $datePost + 14;
+                    $getAccessToken = $this->mod_general->select(Tbl_social::tblName, '*', array(Tbl_social::
+                            s_id => $setPost->{Tbl_share_pro::social_id}));
+                    $getPostData = $this->mod_general->select(Tbl_posts::tblName, '*', array(Tbl_posts::
+                            id => $setPost->{Tbl_share_pro::post_id}));
+                    if (!empty($getAccessToken) && !empty($getPostData) && $getAccessToken[0]->{
+                        Tbl_social::s_type} == 'Facebook' && $setPost->{Tbl_share_pro::type} ==
+                        'Facebook') {
+                        $postFB = $this->postToFacebook($getPostData, $getAccessToken, $setPost->{
+                            Tbl_share_pro::group_id});
+                        if (!empty($postFB['id'])) {
+                            $splitId = explode("_", $postFB['id']);
+                            if (!empty($splitId[1]))
+                                $this->mod_general->update(Tbl_share_pro::TblName, array(
+                                    Tbl_share_pro::post_time => time(),
+                                    Tbl_share_pro::status => 1,
+                                    Tbl_share_pro::id_posted_group => $splitId[1]), array(Tbl_share_pro::id => $setPost->{
+                                        Tbl_share_pro::id}));
+                        } elseif (!empty($postFB['error'])) {
+                            $this->mod_general->update(Tbl_share_pro::TblName, array(Tbl_share_pro::
+                                    post_time => time(), Tbl_share_pro::status => 2), array(Tbl_share_pro::id => $setPost->{
+                                    Tbl_share_pro::id}));
+                            //error_log(print_r($postFB['error'], true));
+                        }
+                        if ($i % 5 == 0) {
+                            sleep(10);
+                        } else {
+                            sleep(3);
+                        }
+                    }
+
+                }
+                //echo ' time post: '.$datePost .' current date: '. $today . ' endtime: ' .$endTime .'<br/>';
+                //                if($today >= $datePost && $today <= $endTime) {
+                //                    echo 'the time is up :' . date('Y-m-d H:i:s',$datePost);
+                //                    echo '<br/>';
+                //                }
+                /*delete the preveous post */
+                $deleteOn = strtotime("last month");
+                $postOn = $setPost->{Tbl_share_pro::post_time};
+                if ($deleteOn > $postOn) {
+                    $this->mod_general->delete(Tbl_share_pro::TblName, array(Tbl_share_pro::id => $setPost->{
+                            Tbl_share_pro::id}));
+                }
+                /*end delete the preveous post */
+            }
+        }
+        die;
+    }
+
+    /*post to facebook api*/
+    public function postToFacebook($getPostData, $getAccessToken, $group) {
+        $DataArr = json_decode($getPostData[0]->{Tbl_posts::conent}, true);
+        $ValueArr = array('access_token' => $getAccessToken[0]->s_access_token);
+        $dataArrs = array_merge($DataArr, $ValueArr);
+
         $this->load->library('HybridAuthLib');
-        $provider = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+        $provider = ($this->uri->segment(3)) ? $this->uri->segment(3) : $getAccessToken[0]->{
+            Tbl_social::s_type};
         try {
             if ($this->hybridauthlib->providerEnabled($provider)) {
                 $service = $this->hybridauthlib->authenticates($provider);
@@ -603,28 +750,31 @@ class Managecampaigns extends CI_Controller {
                     'appId' => $service->config['keys']['id'],
                     'secret' => $service->config['keys']['secret'],
                     'cookie' => true,
-                ));
-                $getAccessToken = $this->mod_general->select(Tbl_social::tblName);
-                $access_token = $getAccessToken[1]->s_access_token;
-                $post =  array(
-                    'access_token' => $access_token,
-                    'message' => 'How to compare car insurance quotes to get the cheapest deal - ' . date('Y-m-d H:i:s'),
-                    'name' =>'How to compare car insurance quotes to get the cheapest deal',
-                    'link' =>'http://www.networkedblogs.com/p/14tFDY?ref=source',
-                    'caption' =>'How to compare car insurance quotes to get the cheapest deal',
-                    'picture' =>'https://lh6.googleusercontent.com/-CmaOJMcoRqs/VSh-LvE70OI/AAAAAAAAKMg/5QI9bRuufpc/w800/_epLGtneZ_1421754324.jpg',
-                );
-                
+                    ));
+                //                $getAccessToken = $this->mod_general->select(Tbl_social::tblName);
+                //                $access_token = $getAccessToken[1]->s_access_token;
+                //                $post =  array(
+                //                    'access_token' => $access_token,
+                //                    'message' => $getPostData[0]->{Tbl_posts::conent},
+                //                    'name' =>$getPostData[0]->{Tbl_posts::name},
+                //                    'link' =>$getPostData[0]->{Tbl_posts::modify},
+                //                    'caption' =>'How to compare car insurance quotes to get the cheapest deal',
+                //                    'picture' =>'https://lh6.googleusercontent.com/-CmaOJMcoRqs/VSh-LvE70OI/AAAAAAAAKMg/5QI9bRuufpc/w800/_epLGtneZ_1421754324.jpg',
+                //                );
+
                 //and make the request
-                $res = $facebook->api('/462048663817597/feed', 'POST', $post);
+                $res = $facebook->api('/' . $group . '/feed', 'POST', $dataArrs);
+                if ($res) {
+                    return $res;
+                }
 
             }
         }
         catch (exception $e) {
-            
+
         }
-        die;
     }
+    /*end post to facebook api*/
 }
 /* End of file welcome.php */
 /* Location: ./application/controllers/welcome.php */

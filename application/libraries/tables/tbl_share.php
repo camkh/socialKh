@@ -10,4 +10,5 @@ class Tbl_share
     const post_id = "p_id";
     const option = "sh_option";
     const type = "sh_type";
+    const date_post = "sh_post_time";
 }

@@ -42,8 +42,8 @@ $config =
 
 			"Facebook" => array (
 				"enabled" => true,
-				"keys"    => array ( "id" => "1456273291274751", "secret" => "d084315cfcbf6da8f63ae7c660c965ad", 'cookie' => true),
-                "scope"   => "email user_about_me user_birthday user_hometown public_profile publish_actions user_photos read_stream status_update user_groups manage_pages friends_groups photo_upload publish_stream offline_access", // optional
+				"keys"    => array ( "id" => "233050993510851", "secret" => "cb5fa7b926c85cc7606be76b9b4f1189", 'cookie' => true),
+                "scope"   => "email, user_about_me, user_birthday, user_hometown, public_profile, publish_actions, user_groups", // optional
 			),
 
 			"Twitter" => array (

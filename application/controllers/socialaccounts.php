@@ -278,7 +278,9 @@ class Socialaccounts extends CI_Controller
         $service = $this->hybridauthlib->authenticate($provider);
         $getAccessToken = $service->getAccessToken();
         if (!empty($getAccessToken)) {
-            $this->hybridauthlib->disconnectAllProviders($provider, $url);
+            //$batchResponse = $service->getLogout($url);
+            //$this->hybridauthlib->disconnectAllProviders($provider, $url);
+            redirect($url);
         } else {
             redirect($url);
         }

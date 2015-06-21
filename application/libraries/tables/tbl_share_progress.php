@@ -9,4 +9,9 @@ class Tbl_share_pro
     const group_id = "sg_id";
     const post_id = "p_id";
     const status = "shp_status";
+    const social_id = "sc_id";
+    const type = "shp_type";
+    const id_posted_group = "shp_posted_id";
+    const post_time = "shp_time";
+    const share_id = "shp_share_id";
 }

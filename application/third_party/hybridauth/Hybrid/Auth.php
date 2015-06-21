@@ -346,19 +346,19 @@ class Hybrid_Auth
 	/**
 	* A generic function to logout all connected provider at once 
 	*/ 
-	public static function disconnectAllProviders($provider)
+	public static function disconnectAllProviders($provider, $urls)
 	{
 		$idps = Hybrid_Auth::getConnectedProviders();
         if(empty($idps)) {
             $adapter = Hybrid_Auth::getAdapter( $provider );
-			$url = $adapter->logout();
+            $url = $adapter->logout($urls);
         } else {
             foreach( $idps as $idp ){
     			$adapter = Hybrid_Auth::getAdapter( $idp );
-    			$url = $adapter->logout();
+    			$url = $adapter->logout($urls);
     		}  
         }
-        $url = str_replace('logoutall','logintosocial',$url);
+        $url = str_replace('logoutall','logintosocial',$url);        
 		self::redirect($url);
 	}
 	// --------------------------------------------------------------------
